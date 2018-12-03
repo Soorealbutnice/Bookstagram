@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.ReadBookDao">
+	
+	<select	id="listReadBook" parameterType="readBookDto" resultType="readBookDto">
+	 select rownum rn, a.*
+	 from	(select *
+			from readbook
+			where id = #{id}
+		    <if test="rbook_no != 0">
+		    and rbook_no &lt; #{rbook_no}
+		    </if>
+		    order by rbook_no desc) a
+	 where rownum &gt;= 1
+     and rownum &lt;= 10
+	</select>
+	
+	<insert id="insertReadBook" parameterType="readBookDto">
+		insert 
+		into readbook(rbook_no, rbook_isbn, rbook_title, rbook_desc, rbook_author, read_date, id, rbook_pic)
+		values (readbook_seq.nextval, #{risbn},#{rbook_title},#{rbook_desc},#{rbook_author}, sysdate, #{id}, #{rbook_pic})
+	</insert>
+	
+	
+	<delete id="deleteReadBook" parameterType="int">
+		delete from readbook
+		where rbook_no = #{readbook_no}
+	</delete>
+	
+	<select id="getReadBook" resultType="readBookDto" parameterType="readBookDto">
+		select *
+		from readbook
+		where id = #{id}
+		and rbook_isbn = #{risbn}
+	</select>
+	
+	<select id="myReadBookList" resultType="readBookDto" parameterType="String">
+		select *
+		from readbook
+		where id = #{id}
+	</select>
+	
+     <select id="readBookCheck" resultType="String" parameterType="String">
+	 select rbook_isbn
+	 from readbook
+	 where id = #{id}
+	 </select>
+	
+	
+</mapper>

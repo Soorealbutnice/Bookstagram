@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.MemberDao">
+   
+   <select id="getMember" parameterType="String" resultType="MemberDto">
+      select *
+      from member
+      where id = #{id}
+   </select>
+   <select id="idCheck" parameterType="String" resultType="int">
+      select count(id) cnt
+      from member
+      where id = #{id}
+   </select>
+   
+   <insert id="insertMember" parameterType="memberDto">
+      insert 
+      into member (name, id, pass, email1, email2, joindate)
+      values (#{name}, #{id}, #{pass}, #{email1}, #{email2}, sysdate)
+   </insert>
+
+   <insert id="insertApi" parameterType="memberDto">
+      insert 
+      into member (id,joindate)
+      values (#{id}, sysdate)
+   </insert>
+   <select id="login" parameterType="map" resultType="memberDto">
+      select *
+      from member
+      where id = #{id} and pass = #{pass}
+   </select>
+   <update id="writeArticle" parameterType="memberDto">
+      update member set nickname = #{nickname},
+                    introduce = #{introduce},
+                    origin_proPicture = #{origin_proPicture},
+                    save_proPicture = #{save_proPicture},
+                    saveFolder = #{saveFolder}
+      where id = #{id}
+   </update>
+
+   <update id="createAuthKey" parameterType="memberDto">
+      update member set user_authcode = #{key} where email1 = #{email1}
+   </update>
+<!-- 회원정보 수정 -->
+   <update id="updateMember" parameterType="memberDto">
+      update member set 
+                   <if test="save_proPicture != 'nopic'">
+                 origin_proPicture = #{origin_proPicture},
+                 save_proPicture = #{save_proPicture},
+                 saveFolder = #{saveFolder},
+                 </if>
+                  email1 = #{email1},
+                     email2 = #{email2}, 
+                     name = #{name}, 
+                     pass = #{pass},
+                     nickname = #{nickname},
+                     introduce = #{introduce}
+
+      where id = #{id}
+
+   </update>
+   
+   <delete id="deletePin" parameterType="String">
+      delete from pin
+      where id = #{id}
+   </delete>
+   
+    <delete id="deleteReply" parameterType="String">
+        delete from reply
+        where reply_id = #{id} 
+   </delete>
+   
+   <delete id="deletePost" parameterType="String">
+      delete from post
+      where post_id = #{id}
+   </delete>
+   
+   <delete id="deleteReadbook" parameterType="String">
+      delete from readbook
+      where id = #{id}
+   </delete>
+   
+   <delete id="deleteSupport" parameterType="string">
+      delete from support
+      where supported_id = #{id}
+      or supporter = #{id}
+   </delete>
+   
+   <delete id="deleteWantbook" parameterType="string">
+      delete from wantbook
+      where id = #{id}
+   </delete>
+   
+   <delete id="deleteFollow" parameterType="String">
+      delete from follow
+      where follower_id = #{id}
+      or followed_id = #{id}
+   </delete>
+   
+   <delete id="deleteMember" parameterType="String">
+      delete from member
+      where id = #{id}
+   </delete>
+   
+  
+   
+</mapper>

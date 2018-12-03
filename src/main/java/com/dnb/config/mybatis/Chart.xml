@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.dnb.member.dao.ChartDao">
+ 
+    <select id="avgreadbook" resultType="HashMap" parameterType="String">
+      select ROUND((p.post_no/count(p.post_id)), 0) pp, ROUND((r.rbook_no/count(r.id)), 0) rr 
+      from post p, readbook r
+      where p.post_id = r.id
+      and r.id NOT in #{id}
+      group by pp
+   </select>
+   
+   <select id="myreadbook" resultType="HashMap" parameterType="String">
+      select p.post_no, r.rbook_no
+      from post p, readbook r
+      where p.post_id = r.id
+      and r.id = #{id}
+      group by p.post_no
+   </select>
+   
+   <select id="listwritereview" resultType="HashMap" parameterType="String">
+      select  COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '01', 1)) m1,
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '02', 1)) m2, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '03', 1)) m3, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '04', 1)) m4, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '05', 1)) m5, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '06', 1)) m6, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '07', 1)) m7, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '08', 1)) m8, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '09', 1)) m9, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '10', 1)) m10, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '11', 1)) m11, 
+              COUNT(DECODE(TO_CHAR(WRITE_DATE, 'MM'), '12', 1)) m12  
+      from post
+      where post_id = #{id}
+      and TO_CHAR(WRITE_DATE, 'YYYYMM') &gt; '201801'
+      and TO_CHAR(WRITE_DATE, 'YYYYMM') &lt; '201901'
+   </select>
+   
+   <select id="listreadbook" resultType="HashMap" parameterType="String">
+      SELECT COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '01', 1)) m1,
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '02', 1)) m2, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '03', 1)) m3, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '04', 1)) m4, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '05', 1)) m5, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '06', 1)) m6, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '07', 1)) m7, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '08', 1)) m8, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '09', 1)) m9, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '10', 1)) m10, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '11', 1)) m11, 
+             COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '12', 1)) m12  
+      FROM READBOOK
+      WHERE id = #{id}
+      AND TO_CHAR(READ_DATE, 'YYYYMM') &gt; '201801'
+      AND TO_CHAR(READ_DATE, 'YYYYMM') &lt; '201901'
+   </select>
+   
+   <select id="listavgbook" resultType="HashMap" parameterType="String">
+       SELECT COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '01', 1)) m1,
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '02', 1)) m2, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '03', 1)) m3, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '04', 1)) m4, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '05', 1)) m5, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '06', 1)) m6, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '07', 1)) m7, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '08', 1)) m8, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '09', 1)) m9, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '10', 1)) m10, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '11', 1)) m11, 
+              COUNT(DECODE(TO_CHAR(READ_DATE, 'MM'), '12', 1)) m12
+      FROM READBOOK
+      WHERE id NOT in #{id}
+      AND TO_CHAR(READ_DATE, 'YYYYMM') &gt; '201801'
+      AND TO_CHAR(READ_DATE, 'YYYYMM') &lt; '201901'
+   </select>
+   
+ </mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.BookinfoDao">
+
+   <select   id="reviewinfo" parameterType="String" resultType="postDto">
+   select p.*, m.*
+   from post p, member m
+   where p.post_id =  m.id
+   and isbn = #{isbn}
+   </select>
+   
+</mapper>

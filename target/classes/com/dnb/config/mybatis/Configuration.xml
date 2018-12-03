@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+ <configuration>
+ 	<typeAliases>
+ 		<typeAlias alias="map" type="java.util.Map"/>
+ 	
+ 		<typeAlias alias="followDto" type="com.dnb.member.model.FollowDto"/>
+ 		<typeAlias alias="memberDto" type="com.dnb.member.model.MemberDto"/>
+ 		<typeAlias alias="readBookDto" type="com.dnb.member.model.ReadBookDto"/>
+ 		<typeAlias alias="supportDto" type="com.dnb.member.model.SupportDto"/>
+ 		<typeAlias alias="wantBookDto" type="com.dnb.member.model.WantBookDto"/>
+ 		<typeAlias alias="replyDto" type="com.dnb.post.model.ReplyDto"/>
+ 		<typeAlias alias="hashtagDto" type="com.dnb.post.model.HashtagDto"/>
+ 		<typeAlias alias="pinDto" type="com.dnb.post.model.PinDto"/>
+ 		<typeAlias alias="postDto" type="com.dnb.post.model.PostDto"/>
+ 		<typeAlias alias="bookinfoDto" type="com.dnb.member.model.BookinfoDto"/>
+ 		
+ 	</typeAliases>
+
+ </configuration>

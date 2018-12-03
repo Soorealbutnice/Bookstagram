@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<context:component-scan base-package="com.dnb.**.service"/>
+	
+	<!-- Root Context: defines shared resources visible to all other web components 
+	<bean id="ds" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="dnb"/>
+		<property name="password" value="dnb"/>
+	</bean>
+	-->
+	
+	<bean id="ds" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/dnb"/>
+	</bean>
+	
+	<bean id="ssfb" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds"/>
+		<property name="configLocation" value="classpath:com/dnb/config/mybatis/Configuration.xml"/>
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/dnb/config/mybatis/Admin.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Reply.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Follow.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Hashtag.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Member.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Pin.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Post.xml</value>
+				<value>classpath:com/dnb/config/mybatis/ReadBook.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Support.xml</value>
+				<value>classpath:com/dnb/config/mybatis/WantBook.xml</value>
+				<value>classpath:com/dnb/config/mybatis/BookInfo.xml</value>
+				<value>classpath:com/dnb/config/mybatis/Chart.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="ss" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="ssfb"/>
+	</bean>
+	
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"/>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="txManager"/>
+	
+			<!-- Google 소셜 로그인 연결 설정 -->
+	<bean id = "googleConnectionFactory" class="org.springframework.social.google.connect.GoogleConnectionFactory">
+	<constructor-arg value="1003812454096-4oboiha677qgcto2qienbtvjf6vcsg6o.apps.googleusercontent.com"/>
+	<constructor-arg value="0pueXuNpdnHATHa7CAzZ2frV"/>    
+	</bean>
+	 
+	<bean id = "googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
+	<property name="scope" value="https://www.googleapis.com/auth/plus.login"></property>
+	<property name="redirectUri" value="http://localhost/dnb/login/googleSignInCallback"/>
+	 
+	</bean>
+	<!-- 메일 보내기 -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="hy545332@gmail.com" />
+		<property name="password" value="hyeyoon985" />
+
+
+	<!-- email 요청시는 SMTP -->
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+		<bean id = "transactionManager" class ="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<property name = "dataSource" ref = "ds"></property>
+</bean>
+<tx:annotation-driven/>
+</beans>
+
+
+
+
+
+
+
+
+
+

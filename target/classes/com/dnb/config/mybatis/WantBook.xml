@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.WantBookDao">
+
+	<select	id="listWantBook" parameterType="wantBookDto" resultType="wantBookDto">
+	 select rownum rn, a.*
+	 from	(select *
+			from wantbook
+			where id = #{id}
+		    <if test="wbook_no != 0">
+		    and wbook_no &lt; #{wbook_no}
+		    </if>
+		    order by wbook_no desc) a
+	 where rownum &gt;= 1
+     and rownum &lt;= 10
+
+	</select>
+	
+	<insert id="insertWantBook" parameterType="wantBookDto">
+	insert 
+		into wantbook(wbook_no, wbook_isbn, wbook_title, wbook_pic, wbook_desc, wbook_author, id)
+		values (wantbook_seq.nextval, #{wisbn},#{wbook_title},#{wbook_pic},#{wbook_desc},#{wbook_author},#{id})
+	</insert>
+	
+	<delete id="deleteWantBook" parameterType="int">
+		delete from wantbook
+		where wbook_no = #{wbook_no}
+	</delete>
+	
+	<select id="getWantBook" resultType="wantBookDto" parameterType="wantBookDto">
+	select *
+	from wantbook
+	where id = #{id}
+	and wbook_isbn = #{wisbn}
+	</select>
+	
+	<select id="myWantBook" resultType="wantBookDto" parameterType="String">
+		select *
+		from wantbook
+		where id = #{id}
+	</select>
+	
+
+	 <select id="wantBookCheck" resultType="String" parameterType="String">
+	 select wbook_isbn
+	 from wantbook
+	 where id = #{id}
+	 </select>
+	
+</mapper>

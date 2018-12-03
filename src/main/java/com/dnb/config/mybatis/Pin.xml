@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.post.dao.PinDao">
+
+	<select id="getMyPin" parameterType="pinDto" resultType="pinDto">
+	select *
+	from pin
+	where post_no = #{post_no}
+	and id	= #{post_id}
+	</select>
+	
+	<insert id="insertPin" parameterType="pinDto">
+		insert into pin
+		values(pin_seq.nextval, #{post_id}, #{post_no})
+	</insert>
+	
+	<delete id="deletePin" parameterType="pinDto">
+		delete from pin
+		where post_no = #{post_no}
+	</delete>
+	
+	<select id="pinCheck" parameterType="String" resultType="int">
+		select post_no
+		from pin
+		where id = #{post_id}
+	</select>
+
+</mapper>

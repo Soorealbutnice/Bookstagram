@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.FollowDao">
+
+	<select id="selectFollow" resultType="followDto" parameterType="String">
+		select m.*, f.follow_no, f.follower_id, f.followed_id,
+			case  
+	            when to_char(f.follow_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+	            then to_char(f.follow_date, 'hh24:mi:ss') 
+	            else to_char(f.follow_date, 'yy.mm.dd') 
+	        end follow_date 
+		from follow f, member m
+		where f.followed_id = m.id
+		and f.follower_id = #{id}
+		order by f.follow_date
+	</select>
+	
+	<select id="meFollowList" resultType="followDto" parameterType="String">
+		select m.*, f.follow_no, f.follower_id, f.followed_id,
+		case  
+             when to_char(f.follow_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+             then to_char(f.follow_date, 'hh24:mi:ss') 
+             else to_char(f.follow_date, 'yy.mm.dd') 
+         end follow_date 
+		from follow f, member m
+		where f.followed_id = m.id
+		and f.followed_id = #{id}
+	</select >
+	
+	<select id="myFollowList" resultType="followDto" parameterType="followDto">
+		 select rownum rn, a.*
+	     from(
+	            select m.*, f.follow_no, f.follower_id, f.followed_id,
+			            case 
+				            when to_char(f.follow_date, 'yymmdd') = to_char(sysdate, 'yymmdd')
+				            then to_char(f.follow_date, 'hh24:mi:ss')
+				            else to_char(f.follow_date, 'yy.mm.dd')
+			        	end follow_date
+	            from follow f, member m
+	            where f.followed_id = m.id
+	            and f.follower_id = #{follower_id}
+	            <if test="follow_no != 0">
+		        and f.follow_no &lt; #{follow_no}
+		        </if>
+	            order by f.follow_no desc) a
+	     where rownum &gt;= 1
+	     and rownum &lt;= 8
+	</select>
+	
+	<select id="getFollower" resultType="followDto" parameterType="followDto">
+		select *
+		from follow
+		where followed_id = #{followed_id}
+		and follower_id = #{follower_id}
+	</select>
+	
+	<delete id="deleteFollow" parameterType="int">
+		delete from follow
+		where follow_no = #{follow_no}
+	</delete>
+	
+	<insert id="insertFollow" parameterType="followDto">
+		insert into follow
+		values(follow_seq.nextval, #{follower_id}, sysdate, #{followed_id})
+	</insert>
+	
+	<select id="followerCheck" parameterType="String" resultType="String">
+		select followed_id
+		from follow
+		where follower_id= #{id}
+	</select>
+	
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.member.dao.SupportDao">
+
+	<select id="selectSupport" parameterType="supportDto" resultType="supportDto" >
+	select rownum rn, a.*
+     from(
+		select m.*, s.support_no, s.pay, s.supporter, s.supported_id,
+		case  
+             when to_char(s.support_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+             then to_char(s.support_date, 'hh24:mi:ss') 
+             else to_char(s.support_date, 'yy.mm.dd') 
+	         end support_date 
+		from support s, member m
+		where s.supporter = m.id
+		and s.supporter = #{id}
+		<if test="support_no != 0">
+	        and s.support_no &lt; #{support_no}
+        </if>
+        order by s.support_no desc ) a
+	    where rownum &gt;= 1
+	    and rownum &lt;= 3
+	</select>
+	
+	<select id="mySupportList" parameterType="supportDto" resultType="supportDto">
+	select rownum rn, a.*
+     from(
+			select m.*, s.support_no, s.pay, s.supporter, s.supported_id,
+			case  
+		             when to_char(s.support_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+		             then to_char(s.support_date, 'hh24:mi:ss') 
+		             else to_char(s.support_date, 'yy.mm.dd') 
+		         end support_date 
+			from support s, member m
+			where s.supporter = m.id
+			and s.supported_id = #{id}
+			<if test="support_no != 0">
+	        and s.support_no &lt; #{support_no}
+	        </if>
+            order by s.support_no desc ) a
+		     where rownum &gt;= 1
+		     and rownum &lt;= 3
+	</select>
+	
+	<insert id="insertSupport" parameterType="supportDto">
+		insert into support(support_no, pay, supporter, support_date, supported_id)
+		values(support_seq.nextval, #{pay}, #{supporter}, sysdate, #{supported_id})
+	</insert>
+	
+</mapper>

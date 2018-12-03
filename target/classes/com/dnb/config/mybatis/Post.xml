@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dnb.post.dao.PostDao">
+
+	<select id="getMyPostList" resultType="postDto" parameterType="postDto">
+		select rownum rn, a.*
+			from(
+			select post_no, title, content, book_name, simplereview, like_count, post_id, origin_postpicture, save_postpicture, psavefolder, bookinfo, bookimg, isbn,
+			    case                                          
+			         when to_char(write_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+			         then to_char(write_date, 'hh24:mi:ss') 
+			         else to_char(write_date, 'yy.mm.dd') 
+			     end write_date 
+			    from post
+			    where post_id = #{post_id}
+			    <if test="post_no != 0">
+			    and post_no &lt; #{post_no}
+			    </if>
+			    order by post_no desc) a
+			where rownum &gt;= 1
+			and rownum &lt;= 4
+	</select>
+	
+	<select id="selectPost" resultType="postDto" parameterType="String">
+		select p.*, m.*
+		from post p, member m
+		where p.post_id=m.id
+		and p.post_id = #{id}
+		order by p.write_date desc 
+	</select>
+	
+	<select id="mainPostList" resultType="postDto" parameterType="int">
+		select *
+	    from(
+	            select m.id, m.origin_propicture, m.save_propicture, m.savefolder, m.nickname, m.introduce,
+	                   p.post_no, p.write_date, p.title, p.content, p.book_name, p.origin_postpicture, 
+	                   p.save_postpicture, p.psavefolder, p.simplereview, p.like_count, p.post_id, p.hashtag1, p.hashtag2, p.hashtag3, p.hashtag4, p.isbn, rownum rnum
+	            from post p, member m
+	            where p.post_id = m.id
+	    )
+	    where rnum between #{listLength} and #{listLength} +15
+	</select>
+	
+	<select id="searchMainList" parameterType="map" resultType="postDto">
+	    select *
+	    from(
+	            select m.id, m.origin_propicture, m.save_propicture, m.savefolder, m.nickname, m.introduce,
+	                   p.post_no, p.write_date, p.title, p.content, p.book_name, p.origin_postpicture, p.isbn,
+	                   p.save_postpicture, p.psavefolder, p.simplereview, p.like_count, p.post_id, p.hashtag1, p.hashtag2, p.hashtag3, p.hashtag4, rownum rnum
+	            from post p, member m
+	            where p.post_id = m.id
+	            and p.search like '%'||#{searchWord}||'%'
+	            order by post_no
+	    )
+	    where rnum between #{listLength} and #{listLength} +15
+	</select>
+	
+	<select id="mainFollowList" resultType="postDto" parameterType="map">
+		select *
+		from(
+			select m.id, m.origin_propicture, m.save_propicture, m.savefolder, m.nickname, m.introduce,
+		                   p.post_no, p.write_date, p.title, p.content, p.book_name, p.origin_postpicture, p.isbn,
+		                   p.save_postpicture, p.psavefolder, p.simplereview, p.like_count, p.post_id, p.hashtag1, p.hashtag2, p.hashtag3, p.hashtag4, rownum rnum
+			from member m, follow f, post p
+			where m.id = f.followed_id
+			and f.followed_id = p.post_id
+			and f.follower_id = #{id}
+			order by p.post_no
+		)
+		 where rnum between #{listLength} and #{listLength} +15
+	</select>
+	
+	<insert id="writePost" parameterType="postDto">
+      insert into post (post_no, title, simplereview, content, post_id, write_date, origin_postPicture, save_postPicture, psavefolder, hashtag1, hashtag2, hashtag3, hashtag4, book_name, bookImg, bookInfo, isbn, search)
+      values (post_seq.nextval, #{title}, #{simpleReview}, #{content}, #{post_id}, sysdate, #{origin_postPicture}, #{save_postPicture}, #{psavefolder}, #{hashtag1}, #{hashtag2}, #{hashtag3}, #{hashtag4}, #{book_name}, #{bookImg}, #{bookInfo}, #{isbn}, #{search})
+   </insert>
+
+   <select id="listPost" parameterType="map" resultType="postDto">
+	    select post_no, title, content, post_id, write_date, origin_postPicture, save_postPicture, psavefolder
+	    from post
+	    order by post_no
+   </select>
+
+   <select id="viewPost" parameterType="int" resultType="postDto">
+		select p.post_no, p.title, p.content, p.post_id, p.origin_postPicture, p.save_postPicture, p.psavefolder, p.hashtag1, p.hashtag2, p.hashtag3, p.hashtag4, p.isbn,
+		       m.nickname, p.book_name, p.bookImg, p.bookInfo, m.savefolder, m.save_proPicture,
+		       case                                          
+			        when to_char(write_date, 'yymmdd') = to_char(sysdate, 'yymmdd') 
+			        then to_char(write_date, 'hh24:mi:ss') 
+			        else to_char(write_date, 'yy.mm.dd') 
+			   end write_date 
+		from post p, member m
+		where p.post_id = m.id 
+		and p.post_no = #{post_no}
+   </select>
+
+   <update id="updateLikeCount" parameterType="int">
+		update post
+		set like_count = like_count+1
+		where post_no = #{post_no}
+   </update>
+	
+	<update id="cancelLikeCount" parameterType="int">
+		update post
+		set like_count = like_count-1
+		where post_no = #{post_no}
+	</update>
+	
+	<select id="getPost" parameterType="int" resultType="postDto">
+	   select *
+	   from post 
+	   where post_no = #{post_no}
+    </select>
+   
+   <delete id="deletePin" parameterType="int">
+	   delete from pin
+	   where post_no = #{post_no}
+   </delete>
+   
+   <delete id="deletePost" parameterType="int">
+	   delete from post
+	   where post_no = #{post_no}
+   </delete>
+   
+   <delete id="deleteReply" parameterType="int">
+  		delete from reply
+  		where post_no = #{post_no} 
+   </delete>
+   
+   
+   <update id="modifyPost" parameterType="postDto">
+	update post
+	set
+	    <if test="save_postPicture != 'nopic'">
+		origin_postPicture = #{origin_postPicture},
+		save_postPicture = #{save_postPicture},
+		psavefolder = #{psavefolder},
+		</if>
+		title = #{title},
+		content = #{content},
+		book_name = #{book_name},
+		simpleReview = #{simpleReview},
+		hashtag1 = #{hashtag1},
+		hashtag2 = #{hashtag2},
+		hashtag3 = #{hashtag3},
+		hashtag4 = #{hashtag4},
+		bookinfo = #{bookInfo},
+		bookimg = #{bookImg},
+		isbn = #{isbn},
+		search = #{search}
+	where post_no = #{post_no}
+   </update>
+
+</mapper>
